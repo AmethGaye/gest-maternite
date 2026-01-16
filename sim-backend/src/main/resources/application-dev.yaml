@@ -13,6 +13,11 @@ spring:
         dialect: org.hibernate.dialect.PostgreSQLDialect
         format_sql: true
 
+  # JWT
+  jwt:
+    secret: dispart_list_disk_select_disk_one_list_volume_detail_volume
+    expiration: 86400000 # 24 heures
+    refresh-expiration: 604800000 # 7 jours
 
   # DevTools
   devtools:
