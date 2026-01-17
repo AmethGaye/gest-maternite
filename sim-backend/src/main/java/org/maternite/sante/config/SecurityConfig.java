@@ -59,20 +59,21 @@ public class SecurityConfig {
                 )
                 .authorizeHttpRequests(authorize -> authorize
                         // Endpoints publics
-                        .requestMatchers("/auth/**").permitAll()
-                        .requestMatchers("/public/**").permitAll()
+                        .requestMatchers("/auth/login", "/auth/register").permitAll()
                         .requestMatchers("/actuator/**").permitAll()
                         .requestMatchers("/swagger-ui/**", "/v3/api-docs/**").permitAll()
 
                         // Endpoints sécurisés par rôle
-                        .requestMatchers("/admin/**").hasRole("PERSONNEL_ADMIN")
-                        .requestMatchers("/auth/profile").hasAnyRole("PERSONNEL_ADMIN", "SAGE_FEMME", "GYNECOLOGUE", "INFIRMIER", "PEDIATRE")
+                        .requestMatchers("/admin/utilisateurs/**").hasRole("PERSONNEL_ADMIN")
+                        .requestMatchers("/auth/profile", "/auth/logout").hasAnyRole("PERSONNEL_ADMIN", "SAGE_FEMME", "GYNECOLOGUE", "INFIRMIER", "PEDIATRE")
                         .requestMatchers("/patientes/**").hasAnyRole("PERSONNEL_ADMIN", "SAGE_FEMME", "GYNECOLOGUE", "INFIRMIER", "PEDIATRE")
                         .requestMatchers("/accouchements/**").hasAnyRole("PERSONNEL_ADMIN", "SAGE_FEMME", "GYNECOLOGUE")
                         .requestMatchers("/nouveau-nes/**").hasAnyRole("PERSONNEL_ADMIN", "PEDIATRE", "SAGE_FEMME")
                         .requestMatchers("/consultations/**").hasAnyRole("PERSONNEL_ADMIN", "SAGE_FEMME", "GYNECOLOGUE", "PEDIATRE")
                         .requestMatchers("/prescriptions/**").hasAnyRole("PERSONNEL_ADMIN", "GYNECOLOGUE", "PEDIATRE")
+                        .requestMatchers("/soins/**").hasAnyRole( "SAGE_FEMME", "INFIRMIER")
                         .requestMatchers("/plannings/**").hasAnyRole("PERSONNEL_ADMIN", "SAGE_FEMME", "GYNECOLOGUE", "PEDIATRE", "INFIRMIER")
+                        .requestMatchers("/affectations/**").hasAnyRole("PERSONNEL_ADMIN", "SAGE_FEMME", "GYNECOLOGUE", "PEDIATRE", "INFIRMIER")
 
                         // Tous les autres endpoints nécessitent une authentification
                         .anyRequest().authenticated()
