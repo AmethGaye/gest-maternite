@@ -1,10 +1,12 @@
 package org.maternite.sante.dto.response;
 
+import lombok.Builder;
 import lombok.Data;
 import java.time.LocalDate;
 import java.time.LocalDateTime;
 
 @Data
+@Builder
 public class SoinResponseDto {
     private Long id;
     private Long nouveauNeId;
@@ -14,7 +16,7 @@ public class SoinResponseDto {
     private Double poids;
     private Double temperature;
     private Integer tensionArterielle;
-    private LocalDate dateSoin;
+    private LocalDateTime dateSoin;
     private String observations;
     private LocalDateTime createdAt;
     private LocalDateTime updatedAt;

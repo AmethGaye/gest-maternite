@@ -1,5 +1,6 @@
 package org.maternite.sante.dto.response;
 
+import lombok.Builder;
 import lombok.Data;
 import org.maternite.sante.model.enums.EtatGrossesse;
 
@@ -7,6 +8,7 @@ import java.time.LocalDate;
 import java.time.LocalDateTime;
 
 @Data
+@Builder
 public class GrossesseResponseDto {
     private Long id;
     private Long patienteId;

@@ -1,22 +1,42 @@
 package org.maternite.sante.mapper;
 
-import org.mapstruct.*;
 import org.maternite.sante.dto.request.GrossesseRequestDto;
 import org.maternite.sante.dto.response.GrossesseResponseDto;
 import org.maternite.sante.model.Grossesse;
+import org.springframework.stereotype.Component;
 
-@Mapper(componentModel = "spring")
-public interface GrossesseMapper {
+@Component
+public class GrossesseMapper {
 
-    @Mapping(source = "patiente.id", target = "patienteId")
-    @Mapping(source = "patiente.nom", target = "patienteNom")
-    @Mapping(source = "patiente.prenom", target = "patientePrenom")
-    GrossesseResponseDto toDto(Grossesse grossesse);
+    public GrossesseResponseDto toDto(Grossesse grossesse) {
+        if (grossesse == null) {
+            return null;
+        }
 
-    @Mapping(target = "id", ignore = true)
-    @Mapping(target = "patiente", ignore = true)
-    @Mapping(target = "accouchement", ignore = true)
-    @Mapping(target = "createdAt", ignore = true)
-    @Mapping(target = "updatedAt", ignore = true)
-    Grossesse toEntity(GrossesseRequestDto dto);
+        return GrossesseResponseDto.builder()
+                .id(grossesse.getId())
+                .patienteId(grossesse.getPatiente() != null ? grossesse.getPatiente().getId() : null)
+                .patienteNom(grossesse.getPatiente() != null ? grossesse.getPatiente().getNom() : null)
+                .patientePrenom(grossesse.getPatiente() != null ? grossesse.getPatiente().getPrenom() : null)
+                .dateDebut(grossesse.getDateDebut())
+                .datePrevue(grossesse.getDatePrevue())
+                .etatGrossesse(grossesse.getEtatGrossesse())
+                .nombreFoetus(grossesse.getNombreFoetus())
+                .createdAt(grossesse.getCreatedAt())
+                .updatedAt(grossesse.getUpdatedAt())
+                .build();
+    }
+
+    public Grossesse toEntity(GrossesseRequestDto dto) {
+        if (dto == null) {
+            return null;
+        }
+
+        return Grossesse.builder()
+                .dateDebut(dto.getDateDebut())
+                .datePrevue(dto.getDatePrevue())
+                .etatGrossesse(dto.getEtatGrossesse())
+                .nombreFoetus(dto.getNombreFoetus())
+                .build();
+    }
 }

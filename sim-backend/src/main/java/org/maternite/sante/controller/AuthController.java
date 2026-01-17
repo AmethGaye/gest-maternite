@@ -1,35 +1,36 @@
 package org.maternite.sante.controller;
 
+import io.swagger.v3.oas.annotations.Operation;
+import io.swagger.v3.oas.annotations.tags.Tag;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import org.maternite.sante.dto.request.LoginRequest;
 import org.maternite.sante.dto.request.RegisterRequest;
+import org.maternite.sante.dto.response.ApiResponse;
 import org.maternite.sante.dto.response.AuthResponse;
-import org.maternite.sante.exceptions.BadRequestException;
-import org.maternite.sante.model.Utilisateur;
-import org.maternite.sante.repository.UtilisateurRepository;
+import org.maternite.sante.dto.response.UtilisateurResponseDto;
 import org.maternite.sante.security.JwtTokenProvider;
 import org.maternite.sante.security.UserPrincipal;
-import org.springframework.http.HttpStatus;
+import org.maternite.sante.service.UtilisateurService;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.context.SecurityContextHolder;
-import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.web.bind.annotation.*;
 
 @RestController
 @RequestMapping("/auth")
 @RequiredArgsConstructor
+@Tag(name = "Authentification", description = "Endpoints pour l'authentification et l'inscription")
 public class AuthController {
 
     private final AuthenticationManager authenticationManager;
-    private final UtilisateurRepository utilisateurRepository;
-    private final PasswordEncoder passwordEncoder;
+    private final UtilisateurService utilisateurService;
     private final JwtTokenProvider tokenProvider;
 
     @PostMapping("/login")
+    @Operation(summary = "Connexion utilisateur", description = "Permet à un utilisateur de se connecter et d'obtenir un jeton JWT")
     public ResponseEntity<AuthResponse> login(@Valid @RequestBody LoginRequest loginRequest) {
         Authentication authentication = authenticationManager.authenticate(
                 new UsernamePasswordAuthenticationToken(
@@ -59,39 +60,23 @@ public class AuthController {
     }
 
     @PostMapping("/register")
-    public ResponseEntity<?> register(@Valid @RequestBody RegisterRequest registerRequest) {
-        // Vérifier si l'email existe déjà
-        if (utilisateurRepository.existsByEmail(registerRequest.getEmail())) {
-            throw new BadRequestException("Cet email est déjà utilisé");
-        }
-
-        // Vérifier si le matricule existe déjà
-        if (registerRequest.getMatricule() != null &&
-                utilisateurRepository.existsByMatricule(registerRequest.getMatricule())) {
-            throw new BadRequestException("Ce matricule est déjà utilisé");
-        }
-
-        // Créer le nouvel utilisateur
-        Utilisateur utilisateur = Utilisateur.builder()
-                .nom(registerRequest.getNom())
-                .prenom(registerRequest.getPrenom())
-                .email(registerRequest.getEmail())
-                .password(passwordEncoder.encode(registerRequest.getPassword()))
-                .role(registerRequest.getRole())
-                .telephone(registerRequest.getTelephone())
-                .matricule(registerRequest.getMatricule())
-                .estDisponible(true)
-                .build();
-
-        Utilisateur savedUser = utilisateurRepository.save(utilisateur);
-
-        return ResponseEntity.status(HttpStatus.CREATED)
-                .body("Utilisateur créé avec succès avec l'ID : " + savedUser.getId());
+    @Operation(summary = "Inscription utilisateur", description = "Permet de créer un nouveau compte utilisateur")
+    public ResponseEntity<ApiResponse<UtilisateurResponseDto>> register(@Valid @RequestBody RegisterRequest registerRequest) {
+        UtilisateurResponseDto user = utilisateurService.createUser(registerRequest);
+        return ResponseEntity.ok(ApiResponse.success("Utilisateur créé avec succès", user));
     }
 
     @GetMapping("/profile")
+    @Operation(summary = "Profil actuel", description = "Retourne les informations de l'utilisateur actuellement connecté")
     public ResponseEntity<UserPrincipal> getCurrentUser(Authentication authentication) {
         UserPrincipal userPrincipal = (UserPrincipal) authentication.getPrincipal();
         return ResponseEntity.ok(userPrincipal);
+    }
+
+    @PostMapping("/logout")
+    @Operation(summary = "Déconnexion", description = "Permet de se déconnecter de l'application")
+    public ResponseEntity<ApiResponse<Void>> logout() {
+        SecurityContextHolder.clearContext();
+        return ResponseEntity.ok(ApiResponse.success("Déconnexion réussie"));
     }
 }

@@ -1,29 +1,50 @@
 package org.maternite.sante.mapper;
 
-import org.mapstruct.*;
 import org.maternite.sante.dto.request.ConsultationRequestDto;
 import org.maternite.sante.dto.response.ConsultationResponseDto;
 import org.maternite.sante.model.Consultation;
+import org.springframework.stereotype.Component;
 
-@Mapper(componentModel = "spring")
-public interface ConsultationMapper {
+@Component
+public class ConsultationMapper {
 
-    @Mapping(source = "patiente.id", target = "patienteId")
-    @Mapping(source = "patiente.nom", target = "patienteNom")
-    @Mapping(source = "patiente.prenom", target = "patientePrenom")
-    @Mapping(source = "nouveauNe.id", target = "nouveauNeId")
-    @Mapping(source = "nouveauNe.nom", target = "nouveauNeNom")
-    @Mapping(source = "nouveauNe.prenom", target = "nouveauNePrenom")
-    @Mapping(source = "personnel.id", target = "utilisateurId")
-    @Mapping(source = "personnel.nom", target = "personnelNom")
-    @Mapping(source = "personnel.prenom", target = "personnelPrenom")
-    ConsultationResponseDto toDto(Consultation consultation);
+    public ConsultationResponseDto toDto(Consultation consultation) {
+        if (consultation == null) {
+            return null;
+        }
 
-    @Mapping(target = "id", ignore = true)
-    @Mapping(target = "patiente", ignore = true)
-    @Mapping(target = "nouveauNe", ignore = true)
-    @Mapping(target = "personnel", ignore = true)
-    @Mapping(target = "createdAt", ignore = true)
-    @Mapping(target = "updatedAt", ignore = true)
-    Consultation toEntity(ConsultationRequestDto dto);
+        return ConsultationResponseDto.builder()
+                .id(consultation.getId())
+                .patienteId(consultation.getPatiente() != null ? consultation.getPatiente().getId() : null)
+                .patienteNom(consultation.getPatiente() != null ? consultation.getPatiente().getNom() : null)
+                .patientePrenom(consultation.getPatiente() != null ? consultation.getPatiente().getPrenom() : null)
+                .nouveauNeId(consultation.getNouveauNe() != null ? consultation.getNouveauNe().getId() : null)
+                .nouveauNeNom(consultation.getNouveauNe() != null ? consultation.getNouveauNe().getNom() : null)
+                .nouveauNePrenom(consultation.getNouveauNe() != null ? consultation.getNouveauNe().getPrenom() : null)
+                .utilisateurId(consultation.getPersonnel() != null ? consultation.getPersonnel().getId() : null)
+                .personnelNom(consultation.getPersonnel() != null ? consultation.getPersonnel().getNom() : null)
+                .personnelPrenom(consultation.getPersonnel() != null ? consultation.getPersonnel().getPrenom() : null)
+                .dateConsultation(consultation.getDateConsultation())
+                .poids(consultation.getPoids())
+                .temperature(consultation.getTemperature())
+                .tensionArterielle(consultation.getTensionArterielle())
+                .observations(consultation.getObservations())
+                .createdAt(consultation.getCreatedAt())
+                .updatedAt(consultation.getUpdatedAt())
+                .build();
+    }
+
+    public Consultation toEntity(ConsultationRequestDto dto) {
+        if (dto == null) {
+            return null;
+        }
+
+        return Consultation.builder()
+                .dateConsultation(dto.getDateConsultation())
+                .poids(dto.getPoids())
+                .temperature(dto.getTemperature())
+                .tensionArterielle(dto.getTensionArterielle())
+                .observations(dto.getObservations())
+                .build();
+    }
 }

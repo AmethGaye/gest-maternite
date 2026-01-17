@@ -1,25 +1,28 @@
 package org.maternite.sante.mapper;
 
-import org.mapstruct.*;
-import org.maternite.sante.dto.request.RegisterRequest;
 import org.maternite.sante.dto.response.UtilisateurResponseDto;
 import org.maternite.sante.model.Utilisateur;
+import org.springframework.stereotype.Component;
 
-@Mapper(componentModel = "spring")
-public interface UtilisateurMapper {
+@Component
+public class UtilisateurMapper {
 
-    UtilisateurResponseDto toDto(Utilisateur utilisateur);
+    public UtilisateurResponseDto toDto(Utilisateur utilisateur) {
+        if (utilisateur == null) {
+            return null;
+        }
 
-    @Mapping(target = "id", ignore = true)
-    @Mapping(target = "password", ignore = true)
-    @Mapping(target = "createdAt", ignore = true)
-    @Mapping(target = "updatedAt", ignore = true)
-    Utilisateur toEntity(RegisterRequest dto);
-
-    @BeanMapping(nullValuePropertyMappingStrategy = NullValuePropertyMappingStrategy.IGNORE)
-    @Mapping(target = "id", ignore = true)
-    @Mapping(target = "password", ignore = true)
-    @Mapping(target = "createdAt", ignore = true)
-    @Mapping(target = "updatedAt", ignore = true)
-    void updateEntityFromDto(RegisterRequest dto, @MappingTarget Utilisateur utilisateur);
+        return UtilisateurResponseDto.builder()
+                .id(utilisateur.getId())
+                .nom(utilisateur.getNom())
+                .prenom(utilisateur.getPrenom())
+                .email(utilisateur.getEmail())
+                .role(utilisateur.getRole())
+                .telephone(utilisateur.getTelephone())
+                .matricule(utilisateur.getMatricule())
+                .estDisponible(utilisateur.getEstDisponible())
+                .createdAt(utilisateur.getCreatedAt())
+                .updatedAt(utilisateur.getUpdatedAt())
+                .build();
+    }
 }

@@ -1,11 +1,13 @@
 package org.maternite.sante.dto.response;
 
+import lombok.Builder;
 import lombok.Data;
 import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.util.List;
 
 @Data
+@Builder
 public class PrescriptionResponseDto {
     private Long id;
     private Long utilisateurId;
@@ -14,7 +16,7 @@ public class PrescriptionResponseDto {
     private Long patienteId;
     private String patienteNom;
     private String patientePrenom;
-    private LocalDate datePrescription;
+    private LocalDateTime datePrescription;
     private String typePatient;
     private List<MedicamentResponseDto> medicaments;
     private String observations;

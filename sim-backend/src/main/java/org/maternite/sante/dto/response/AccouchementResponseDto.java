@@ -1,5 +1,6 @@
 package org.maternite.sante.dto.response;
 
+import lombok.Builder;
 import lombok.Data;
 import org.maternite.sante.model.enums.TypeAccouchement;
 
@@ -8,6 +9,7 @@ import java.time.LocalTime;
 import java.time.LocalDateTime;
 
 @Data
+@Builder
 public class AccouchementResponseDto {
     private Long id;
     private Long grossesseId;
@@ -16,7 +18,7 @@ public class AccouchementResponseDto {
     private String patientePrenom;
     private Long salleId;
     private Integer numeroSalle;
-    private LocalDate dateAccouchement;
+    private LocalDateTime dateAccouchement;
     private LocalTime heureDebut;
     private LocalTime heureFin;
     private TypeAccouchement type;

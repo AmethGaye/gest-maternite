@@ -1,9 +1,11 @@
 package org.maternite.sante.dto.response;
 
+import lombok.Builder;
 import lombok.Data;
 import java.time.LocalDateTime;
 
 @Data
+@Builder
 public class DossierMedicalResponseDto {
     private Long id;
     private Long patienteId;

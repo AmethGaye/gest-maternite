@@ -1,18 +1,49 @@
 package org.maternite.sante.mapper;
 
-import org.mapstruct.*;
+import lombok.RequiredArgsConstructor;
 import org.maternite.sante.dto.request.PlanningRequestDto;
 import org.maternite.sante.dto.response.PlanningResponseDto;
 import org.maternite.sante.model.Planning;
+import org.springframework.stereotype.Component;
 
-@Mapper(componentModel = "spring", uses = {AffectationMapper.class})
-public interface PlanningMapper {
+import java.util.stream.Collectors;
 
-    PlanningResponseDto toDto(Planning planning);
+@Component
+@RequiredArgsConstructor
+public class PlanningMapper {
 
-    @Mapping(target = "id", ignore = true)
-    @Mapping(target = "affectations", ignore = true)
-    @Mapping(target = "createdAt", ignore = true)
-    @Mapping(target = "updatedAt", ignore = true)
-    Planning toEntity(PlanningRequestDto dto);
+    private final AffectationMapper affectationMapper;
+
+    public PlanningResponseDto toDto(Planning planning) {
+        if (planning == null) {
+            return null;
+        }
+
+        return PlanningResponseDto.builder()
+                .id(planning.getId())
+                .datePlanning(planning.getCreatedAt())
+                .heureDebut(planning.getHeureDebut())
+                .heureFin(planning.getHeureFin())
+                .typeService(planning.getTypeService())
+                .statut(planning.getStatut())
+                .affectations(planning.getAffectations() != null
+                        ? planning.getAffectations().stream()
+                        .map(affectationMapper::toDto)
+                        .collect(Collectors.toList())
+                        : null)
+                .build();
+    }
+
+    public Planning toEntity(PlanningRequestDto dto) {
+        if (dto == null) {
+            return null;
+        }
+
+        return Planning.builder()
+                .heureDebut(dto.getHeureDebut())
+                .heureFin(dto.getHeureFin())
+                .typeService(dto.getTypeService())
+                .statut(dto.getStatut())
+                .build();
+    }
 }
